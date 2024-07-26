@@ -7,14 +7,13 @@ using System.Diagnostics;
 using System;
 using System.IO;
 using SimpleJSON;
+using Microsoft.Win32;
 
 public class ModLoaderScript : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        themePicker.color = new Color(themePicker.color.r, themePicker.color.g, themePicker.color.b, 1f);
-
         gamePathField.text = PlayerPrefs.GetString("GamePathString");
         if (PlayerPrefsExtra.GetColor("UIColor") != null)
             themePicker.color = PlayerPrefsExtra.GetColor("UIColor", new Color(1, 1, 1, 1));
@@ -35,6 +34,11 @@ public class ModLoaderScript : MonoBehaviour
     public void SetColorFromPicker()
     {
         SetUIColor(themePicker.color);
+    }
+
+    public void SetThemePickerColorToUIColor()
+    {
+        themePicker.color = PlayerPrefsExtra.GetColor("UIColor");
     }
 
     public GameObject[] updateList;
@@ -61,6 +65,16 @@ public class ModLoaderScript : MonoBehaviour
         {
             m.GetComponent<Image>().color = PlayerPrefsExtra.GetColor("UIColor");
         }       
+    }
+
+    public void LocateSteamMetaWare()
+    {
+        //const string Win32SteamPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Valve\\Steam";
+        //const string Win64SteamPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam";
+
+        // string mwhsInstallPath = (string) Microsoft.Win32.Registry.GetValue(Win32SteamPath,
+        // "TestExpand",
+        // "Default if TestExpand does not exist.");
     }
 
     //FUNCTIONS FOR LOADING SHIT
@@ -239,8 +253,7 @@ public class ModLoaderScript : MonoBehaviour
         } 
         else
         {
-            notifPanel.SetActive(true);
-            notifText.text = "No .rpa files have been found within the modpack folder.";
+            ErrorPanel("No .rpa files have been found within the modpack folder.");
         }
     }
 
@@ -253,14 +266,14 @@ public class ModLoaderScript : MonoBehaviour
         loaderPanel.gameObject.SetActive(true);
     }
 
-    public void PathNotExist()
+    public void ErrorPanel(string errorText)
     {
         notifPanel.SetActive(true);
-        notifText.text = "This directory does not exist, or is not a valid copy of MetaWare High School (Demo).";
+        notifText.text = errorText;
     }
     
     //open github
-    public void openGithub()
+    public void OpenGithub()
     {
         Application.OpenURL("https://github.com/SilverSpringing/mochimod/");
     }
@@ -304,6 +317,8 @@ public class ModLoaderScript : MonoBehaviour
     public Sprite noIconSprite;
 
     public DirectoryInfo selectedModDirectory;
+
+    public FlexibleColorPicker fcp;
 
     public Color uiTheme = new Color(1, 1, 1, 1);
 }
